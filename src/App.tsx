@@ -3,6 +3,7 @@ import { App as AntApp, ConfigProvider, Layout, Typography } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import 'dayjs/locale/zh-cn';
 import { AppProvider } from './state/AppContext';
+import { StarryBackground } from './components/StarryBackground';
 import ProjectList from './pages/ProjectList';
 import ProjectHome from './pages/ProjectHome';
 import ExpenseList from './pages/ExpenseList';
@@ -28,20 +29,30 @@ export default function App() {
       <AntApp>
         <AppProvider>
           <Router>
-            <Layout style={{ minHeight: '100vh', background: '#f5f5f5' }}>
+            <StarryBackground />
+            <Layout
+              style={{
+                minHeight: '100vh',
+                background: 'transparent',
+                position: 'relative',
+                zIndex: 1,
+              }}
+            >
               <Header
                 style={{
-                  background: '#fff',
+                  background: 'rgba(8, 10, 24, 0.55)',
+                  backdropFilter: 'blur(14px)',
+                  WebkitBackdropFilter: 'blur(14px)',
                   padding: '0 24px',
                   display: 'flex',
                   alignItems: 'center',
-                  borderBottom: '1px solid #f0f0f0',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
                 }}
               >
-                <Typography.Title level={4} style={{ margin: 0, color: '#1677ff' }}>
+                <Typography.Title level={4} style={{ margin: 0, color: '#fff' }}>
                   💰 AA 记账
                 </Typography.Title>
-                <Typography.Text type="secondary" style={{ marginLeft: 12 }}>
+                <Typography.Text style={{ marginLeft: 12, color: 'rgba(255, 255, 255, 0.65)' }}>
                   团队记账小工具
                 </Typography.Text>
               </Header>
@@ -61,7 +72,7 @@ export default function App() {
                   <Route path="*" element={<ProjectList />} />
                 </Routes>
               </Content>
-              <Footer style={{ textAlign: 'center', background: 'transparent', color: '#999' }}>
+              <Footer style={{ textAlign: 'center', background: 'transparent', color: 'rgba(255, 255, 255, 0.45)' }}>
                 AA 记账 · 数据保存在你的浏览器本地
               </Footer>
             </Layout>

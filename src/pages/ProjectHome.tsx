@@ -28,6 +28,7 @@ import { CategoryPanel } from '../components/CategoryPanel';
 import { ExpenseForm } from '../components/ExpenseForm';
 import { calcCategoryStats, calcPerCapita, calcTotal } from '../utils/stats';
 import { formatMoney } from '../utils/money';
+import '../styles/tabs-dark.css';
 
 export default function ProjectHome() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -182,6 +183,7 @@ export default function ProjectHome() {
       </Space>
 
       <Tabs
+        rootClassName="dark-tabs-root"
         activeKey={activeTab}
         onChange={(key) => {
           if (key === 'overview') {

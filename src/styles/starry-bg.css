@@ -1,0 +1,283 @@
+/* ===========================================================================
+ * 动态夜晚星空背景
+ * - 黑色天空（径向渐变营造地平线微光）
+ * - 倾斜的银河光带（缓慢漂移）
+ * - 三处飘动的星云
+ * - 4 层星点（小/中/大/巨星），各自闪烁节奏
+ * - 偶尔划过的流星
+ * 全程 CSS 动画 + transform 合成层，GPU 友好。
+ * =========================================================================== */
+
+.starry-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 120% 80% at 30% 110%, #0a0e2e 0%, #050617 35%, #000005 65%, #000000 100%);
+}
+
+/* ----- 银河光带 ----- */
+.milky-way {
+  position: absolute;
+  top: -25%;
+  left: -25%;
+  width: 150%;
+  height: 150%;
+  background:
+    linear-gradient(
+      115deg,
+      transparent 28%,
+      rgba(90, 110, 200, 0.06) 36%,
+      rgba(180, 200, 255, 0.13) 44%,
+      rgba(255, 240, 220, 0.18) 50%,
+      rgba(180, 200, 255, 0.13) 56%,
+      rgba(90, 110, 200, 0.06) 64%,
+      transparent 72%
+    );
+  filter: blur(30px);
+  transform: rotate(-15deg);
+  animation: milky-drift 90s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* 银河里密集的小星点（让光带本身有"颗粒感"） */
+.milky-way::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(1px 1px at 10% 50%, rgba(255, 255, 255, 0.9), transparent 60%),
+    radial-gradient(1px 1px at 30% 48%, rgba(255, 255, 255, 0.7), transparent 60%),
+    radial-gradient(1px 1px at 50% 52%, rgba(255, 255, 255, 0.85), transparent 60%),
+    radial-gradient(1px 1px at 70% 49%, rgba(255, 255, 255, 0.7), transparent 60%),
+    radial-gradient(1px 1px at 90% 51%, rgba(255, 255, 255, 0.9), transparent 60%);
+  filter: blur(2px);
+  animation: milky-sparkle 6s ease-in-out infinite;
+}
+
+/* ----- 三处星云 ----- */
+.nebula {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  will-change: transform;
+}
+.nebula-1 {
+  top: 10%;
+  left: 8%;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(140, 90, 230, 0.45) 0%, transparent 70%);
+  animation: nebula-drift-a 42s ease-in-out infinite;
+}
+.nebula-2 {
+  top: 55%;
+  right: 5%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(80, 180, 240, 0.35) 0%, transparent 70%);
+  animation: nebula-drift-b 55s ease-in-out infinite;
+}
+.nebula-3 {
+  bottom: 5%;
+  left: 30%;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(220, 110, 200, 0.30) 0%, transparent 70%);
+  animation: nebula-drift-c 70s ease-in-out infinite;
+}
+
+/* ----- 4 层星点 ----- */
+.star {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+.star-tiny {
+  box-shadow: 0 0 2px rgba(255, 255, 255, 0.6);
+  animation: twinkle var(--dur, 4s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+.star-small {
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+  animation: twinkle var(--dur, 5s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+.star-medium {
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.95);
+  animation: twinkle-strong var(--dur, 3s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+.star-large {
+  box-shadow:
+    0 0 6px rgba(255, 255, 255, 1),
+    0 0 14px rgba(200, 220, 255, 0.55);
+  animation:
+    twinkle-strong var(--dur, 4s) ease-in-out infinite,
+    color-shift 10s ease-in-out infinite;
+  animation-delay: var(--delay, 0s), 0s;
+}
+
+/* ----- 流星 ----- */
+.shooting-star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.85);
+  opacity: 0;
+}
+.shooting-star::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.9), transparent);
+  transform: translateY(-50%);
+}
+.shooting-star-1 {
+  top: 8%;
+  left: 12%;
+  animation: shoot 9s linear infinite;
+  animation-delay: 0s;
+}
+.shooting-star-2 {
+  top: 28%;
+  right: 18%;
+  animation: shoot 13s linear infinite;
+  animation-delay: -5s;
+}
+.shooting-star-3 {
+  top: 48%;
+  left: 6%;
+  animation: shoot 17s linear infinite;
+  animation-delay: -10s;
+}
+
+/* ----- 动画 ----- */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+}
+
+@keyframes twinkle-strong {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.4);
+  }
+}
+
+@keyframes color-shift {
+  0%,
+  100% {
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    filter: hue-rotate(25deg);
+  }
+}
+
+@keyframes milky-drift {
+  0% {
+    transform: translateX(-4%) translateY(0) rotate(-15deg);
+  }
+  50% {
+    transform: translateX(4%) translateY(-3%) rotate(-15deg);
+  }
+  100% {
+    transform: translateX(-4%) translateY(0) rotate(-15deg);
+  }
+}
+
+@keyframes milky-sparkle {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes nebula-drift-a {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(50px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-30px, 40px) scale(0.95);
+  }
+}
+
+@keyframes nebula-drift-b {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-60px, 40px) scale(1.15);
+  }
+}
+
+@keyframes nebula-drift-c {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(40px, 50px) scale(1.05);
+  }
+  66% {
+    transform: translate(-50px, -30px) scale(0.9);
+  }
+}
+
+@keyframes shoot {
+  0% {
+    transform: translate(0, 0) rotate(45deg);
+    opacity: 0;
+  }
+  2% {
+    opacity: 1;
+  }
+  18% {
+    transform: translate(450px, 450px) rotate(45deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(450px, 450px) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+/* 减少动画偏好：用户系统设置要求减少动画时，全部静止 */
+@media (prefers-reduced-motion: reduce) {
+  .milky-way,
+  .nebula,
+  .star,
+  .shooting-star,
+  .milky-way::after {
+    animation: none !important;
+  }
+}

@@ -1,0 +1,36 @@
+/* ===========================================================================
+ * 暗色主题下 antd Tabs 的样式覆盖
+ * - 未选中：白色字体
+ * - 选中：主题蓝 #1677ff
+ * 适用于 .dark-tabs-root 类
+ * =========================================================================== */
+
+.dark-tabs-root .ant-tabs-tab {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.dark-tabs-root .ant-tabs-tab:hover {
+  color: #fff !important;
+}
+
+.dark-tabs-root .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #1677ff !important;
+  text-shadow: 0 0 12px rgba(22, 119, 255, 0.45);
+}
+
+.dark-tabs-root .ant-tabs-ink-bar {
+  background: #1677ff !important;
+  height: 3px;
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(22, 119, 255, 0.6);
+}
+
+.dark-tabs-root .ant-tabs-nav::before {
+  /* tab 下方的分隔线，调暗以贴合星空 */
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 卡片包裹 Tab 时，给卡片加点透明感，让星空透出来 */
+.dark-tabs-root .ant-tabs {
+  background: transparent;
+}
